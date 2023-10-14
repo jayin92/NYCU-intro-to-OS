@@ -51,7 +51,7 @@ int main() {
     if (getpid() != main_pid) { 
         kill(getppid(), SIGUSR1);
     }
-    sleep(100);
+    sleep(10);
 
     return 0;
 }

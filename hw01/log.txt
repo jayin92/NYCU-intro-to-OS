@@ -1,7 +1,0 @@
-Main Process ID: 36326
-
-Fork 1. I'm the child 36328, my parent is 36326.
-Fork 3. I'm the child 36329, my parent is 36328.
-Fork 2. I'm the child 36330, my parent is 36326.
-Fork 3. I'm the child 36331, my parent is 36330.
-Fork 3. I'm the child 36332, my parent is 36326.

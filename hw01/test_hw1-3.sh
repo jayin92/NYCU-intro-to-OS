@@ -7,7 +7,7 @@ gcc test_hw1-3.c -o test_hw1-3 && (./test_hw1-3 > log.txt &)
 sleep 0.5 && rm test_hw1-3
 
 # Read the log file
-log=$(cat log.txt)
+log=$(cat log.txt && rm log.txt)
 
 # Display the log content with newline characters preserved
 echo "$log"
@@ -53,7 +53,7 @@ for ((i=0; i<$rows; i++)); do
   for ((j=0; j<$cols; j++)); do
     if [ $i -ne $j ]; then
       ((total_count++)) 
-      command="./hw1-3.sh --parent ${pid_array[$j]} --child ${pid_array[$i]}"
+      command="./hw1-3.sh --parent ${pid_array[$j]} --child ${pid_array[$i]} --path"
       response=`$command`
       answer=${answer_row[$j]}
       if { [[ $response == "Yes" ]] && [[ $answer == "v" ]]; } || { [[ $response == "No" ]] && [[ $answer == "x" ]]; }; then
