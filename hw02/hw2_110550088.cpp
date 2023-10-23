@@ -143,14 +143,17 @@ public:
     }
 
     void pop(Process* proc){
+        vector<Process*> tmp;
         while(!queue.empty()){
             auto cur = queue.top();
             queue.pop();
             if(cur == proc){
                 break;
             }
-            queue.push(cur);
+            tmp.push_back(cur);
+            // queue.push(cur);
         }
+        for(auto &i: tmp) queue.push(i);
     }
 
     void preempt(){
