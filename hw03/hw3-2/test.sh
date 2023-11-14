@@ -15,7 +15,7 @@ if [ $? -eq 0 ]; then
       fi
     done
     if [ $tle -eq 0 ]; then
-      python val.py $testcase ans.txt
+      python3 val.py $testcase ans.txt
       if [ $? -eq 0 ]; then
         echo "testcase $testcase: AC"
       else
@@ -31,7 +31,7 @@ if [ $? -eq 0 ]; then
   do
     timeout 3.5 ./a.out < testcase/case$testcase.txt > ans.txt
     if [ $? -eq 0 ]; then
-      python val.py $testcase ans.txt
+      python3 val.py $testcase ans.txt
       if [ $? -eq 0 ]; then
         echo "testcase $testcase: AC"
       else

@@ -35,17 +35,28 @@ bool vertex_status[MAX_VERTICES];
 
 // if every vertex is checked, then the graph is converged
 bool is_converged() {
-  for (int i = 0; i < V; i++)
-    if (!vertex_checked[i])
-      return false;
+  for (int i = 0; i < V; i++){
+    {
+      lock_guard<mutex> lock(mutexes[i]);
+      if (!vertex_checked[i])
+        return false;
+    }
+    // this_thread::sleep_for(chrono::milliseconds(dist(rng)));
+  }
+
   return true;
 }
 
 // if any neighbor is in the set, then leave the set
 bool best_response(int v) {
-  for (int u : adjacent_matrix[v])
-    if (vertex_status[u])
-      return false;
+  for (int u : adjacent_matrix[v]){
+    {
+      lock_guard<mutex> lock(mutexes[u]);
+      if (vertex_status[u])
+        return false;
+    }
+    // this_thread::sleep_for(chrono::milliseconds(dist(rng)));
+  }
   return true;
 }
 
@@ -56,14 +67,26 @@ void maximum_independent_set(int v) {
     if (vertex_checked[v]) {
       converged = is_converged();
     } else {
-      bool old_response = vertex_status[v];
-      vertex_status[v] = best_response(v);
-
-      vertex_checked[v] = true;
-      if (vertex_status[v] != old_response) {
-        for (int u : adjacent_matrix[v])
-          vertex_checked[u] = false;
+      {
+        lock_guard<mutex> lock(mutexes[v]);
+        vertex_status[v] = best_response(v);
+        vertex_checked[v] = true;
       }
+      this_thread::sleep_for(chrono::milliseconds(dist(rng)));
+      {
+        lock_guard<mutex> lock(mutexes[v]);
+        bool old_response = vertex_status[v];
+        if (vertex_status[v] != old_response) {
+          for (int u : adjacent_matrix[v]){
+            {
+              lock_guard<mutex> lock(mutexes[u]);
+              vertex_checked[u] = false;
+            }
+            this_thread::sleep_for(chrono::milliseconds(dist(rng)));
+          }
+        }
+      }
+      this_thread::sleep_for(chrono::milliseconds(dist(rng)));
     }
   }
 }
@@ -85,8 +108,9 @@ int main(void) {
     adjacent_matrix[u].push_back(v);
   }
 
-  for (int i = 0; i < V; i++)
+  for (int i = 0; i < V; i++){
     t[i] = thread(maximum_independent_set, i);
+  }
 
   for (int i = 0; i < V; i++)
     t[i].join();
