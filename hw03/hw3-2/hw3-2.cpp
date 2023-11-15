@@ -53,21 +53,22 @@ void maximum_independent_set(int v) {
   bool converged = false;
 
   while (!converged) {
-    mutexes.lock();
-    if (vertex_checked[v]) {
-      converged = is_converged();
-    } else {
-      bool old_response = vertex_status[v];
-      vertex_status[v] = best_response(v);
+    {
+      lock_guard<mutex> lock(mutexes);
+      if (vertex_checked[v]) {
+        converged = is_converged();
+      } else {
+        bool old_response = vertex_status[v];
+        vertex_status[v] = best_response(v);
 
-      vertex_checked[v] = true;
-      if (vertex_status[v] != old_response) {
-        for (int u : adjacent_matrix[v]){
-          vertex_checked[u] = false;
+        vertex_checked[v] = true;
+        if (vertex_status[v] != old_response) {
+          for (int u : adjacent_matrix[v]){
+            vertex_checked[u] = false;
+          }
         }
       }
     }
-    mutexes.unlock();
   }
 }
 
