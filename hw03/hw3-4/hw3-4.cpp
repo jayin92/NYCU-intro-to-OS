@@ -3,6 +3,7 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <cassert>
 
 using namespace std;
 
@@ -10,29 +11,25 @@ int n, m;
 vector<uint64_t> subsets;
 uint64_t one = static_cast<uint64_t>(1), global_count = 0;
 int num_threads = 0;
-
-thread threads[8];
 int t = 0;
 
-mutex cnt_mutex;
-mutex thread_mutex;
+thread threads[8];
+int cnt[8] = {0};
 
-void solve(int index, uint64_t current) {
+
+void solve(int index, uint64_t current, int id) {
     if (index == m) {
         if (current == (one << n) - 1){
-            lock_guard<mutex> lock(cnt_mutex);
-            global_count++;
+            cnt[id] ++;
         }
     } else {
         bool flag = false;
         if(num_threads == (1 << (index+1))){
-            // lock_guard<mutex> lock(thread_mutex);
-            // cerr << "thread " << t << " is created" << endl;
-            threads[t++] = thread(solve, index + 1, current);
-            threads[t++] = thread(solve, index + 1, current | subsets[index]);
+            threads[t++] = thread(solve, index + 1, current, t);
+            threads[t++] = thread(solve, index + 1, current | subsets[index], t);
         } else {
-            solve(index + 1, current);
-            solve(index + 1, current | subsets[index]);
+            solve(index + 1, current, id);
+            solve(index + 1, current | subsets[index], id);
         }
     }
 }
@@ -56,10 +53,10 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    solve(0, 0);
-    // cout << t << endl;
+    solve(0, 0, -1);
     for(int i=0;i<t;i++){
         threads[i].join();
+        global_count += cnt[i];
     }
     cout << global_count << endl;
     return 0;
