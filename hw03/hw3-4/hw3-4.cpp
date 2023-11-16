@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
     if(argc == 3 && string(argv[1]) == "-t"){
         num_threads = stoi(argv[2]);
     }
-    cout << num_threads << endl;
+    // cout << num_threads << endl;
     cin >> n >> m;
 
     subsets.resize(m);
