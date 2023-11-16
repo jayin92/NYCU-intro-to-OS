@@ -53,10 +53,13 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    solve(0, 0, -1);
+    solve(0, 0, 0);
     for(int i=0;i<t;i++){
         threads[i].join();
         global_count += cnt[i];
+    }
+    if(t == 0){
+        global_count = cnt[0];
     }
     cout << global_count << endl;
     return 0;
