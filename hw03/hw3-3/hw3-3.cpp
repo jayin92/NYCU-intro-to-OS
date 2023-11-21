@@ -10,8 +10,9 @@ mutex cnt_mutex;
 
 void is_prime(int l, int r) {
     int count = 0;
+    if(l > r) return;
     if(l <= 2 && 2 <= r) count++;
-    if(l != 2 && l % 2 == 0) l ++;
+    if(l % 2 == 0) l ++;
     for(int num=l;num<=r;num+=2){
         if(num == 1) continue;
         bool flag = true;
@@ -21,7 +22,7 @@ void is_prime(int l, int r) {
                 break;
             }
         }
-        if(flag) count++;
+        if(flag) {count++; }
 
     }
     cnt_mutex.lock();
@@ -39,6 +40,7 @@ int main(int argc, char* argv[]) {
     cin >> n;
     thread t[num_threads];
     for(int i=0;i<num_threads;i++){
+        // cout << "l: " << i*n/num_threads+1 << " r: " << (i+1)*n/num_threads << endl;
         t[i] = thread(is_prime, i*n/num_threads+1, (i+1)*n/num_threads);
     }
     for(int i=0;i<num_threads;i++){
